@@ -15,17 +15,35 @@ public class BloomFilter {
     private final boolean[] array;
     private final List<HashFunction> hashFunctions;
 
-    public BloomFilter(int m, int k) {
-        array = new boolean[m];
-        hashFunctions = IntStream.range(0, k).mapToObj(Hashing::murmur3_128).collect(Collectors.toUnmodifiableList());
+    /**
+     * @param filterSize = m
+     * @param numberOfHashFunctions = k
+     */
+    public BloomFilter(int filterSize, int numberOfHashFunctions) {
+        array = new boolean[filterSize];
+        hashFunctions = IntStream.range(0, numberOfHashFunctions).mapToObj(Hashing::murmur3_128).collect(Collectors.toUnmodifiableList());
     }
 
-    static BloomFilter of(double n, double p) {
-        var m = (int) ceil((n * log(p)) / log(1 / pow(2, log(2))));
-        var k = (int) round((m / n) * log(2));
-        System.out.println("m:" + m);
-        System.out.println("k:" + k);
-        return new BloomFilter(m, k);
+    /**
+     * numberOfElements = n
+     * probabilityOfError = p
+     * filterSize = m
+     * numberOfHashFunctions = k
+     *
+     * @see <a href="https://en.wikipedia.org/wiki/Bloom_filter">Bloom Filter</a>
+     */
+    static BloomFilter of(double numberOfElements, double probabilityOfError) {
+        int filterSize = filterSize(numberOfElements, probabilityOfError);
+        int numberOfHashFunctions = numberOfHashFunctions(numberOfElements, filterSize);
+        return new BloomFilter(filterSize, numberOfHashFunctions);
+    }
+
+    static int numberOfHashFunctions(double numberOfElements, int filterSize) {
+        return (int) round((filterSize / numberOfElements) * log(2));
+    }
+
+    static int filterSize(double numberOfElements, double probabilityOfError) {
+        return (int) ceil((numberOfElements * log(probabilityOfError)) / log(1 / pow(2, log(2))));
     }
 
     public void add(String s) {
@@ -34,8 +52,7 @@ public class BloomFilter {
 
 
     public boolean contains(String s) {
-        boolean match = stream(s).allMatch(hashCode -> array[hashCode]);
-        return match;
+        return stream(s).allMatch(hashCode -> array[hashCode]);
     }
 
     private Stream<Integer> stream(String s) {

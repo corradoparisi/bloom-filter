@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'application'
 }
 
 group 'bloom-filter'
@@ -7,11 +8,17 @@ version '1.0-SNAPSHOT'
 
 sourceCompatibility = 11
 
+application {
+    mainClassName = 'ch.fhnw.dist.BloomFilterMain'
+}
+
 repositories {
     mavenCentral()
 }
 
 dependencies {
     compile 'com.google.guava:guava:28.1-jre'
+    compile 'org.apache.commons:commons-lang3:3.9'
+
     testCompile 'junit:junit:4.12'
 }
