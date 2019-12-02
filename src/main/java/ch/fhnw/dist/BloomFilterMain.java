@@ -10,7 +10,7 @@ import java.util.HashSet;
 public class BloomFilterMain {
     public static void main(String[] args) throws IOException {
         Path path = Paths.get("data/words.txt");
-        var p = 0.01;
+        var p = 0.00001;
 
         var words = new HashSet<>(Files.readAllLines(path, StandardCharsets.UTF_8));
         BloomFilter bloomFilter = BloomFilter.of(words.size(), p);
