@@ -16,7 +16,7 @@ public class BloomFilterMain {
         var filterSize = BloomFilter.filterSize(words.size(), errorProbability);
         var numberOfHashFunctions = BloomFilter.numberOfHashFunctions(words.size(), filterSize);
 
-        BloomFilter bloomFilter = new BloomFilter(words.size(), numberOfHashFunctions);
+        BloomFilter bloomFilter = new BloomFilter(filterSize, numberOfHashFunctions);
         words.forEach(bloomFilter::add); // fill bloom filter
 
         printResults(errorProbability, testSimulations, words, filterSize, numberOfHashFunctions, bloomFilter);
